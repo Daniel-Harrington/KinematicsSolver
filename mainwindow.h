@@ -20,6 +20,8 @@ private:
 private slots:
     void QuestionFormat();
     void SolvePressed();
+    void MinimumKnownCheck();
+    void ResetButton();
 };
 
 #endif // MAINWINDOW_H
