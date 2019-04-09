@@ -14,6 +14,7 @@ The secondary goal of this program is to make it as robust as possible.
 #include <QMessageBox>
 #include <QStringList>
 #include <QVector>
+#include <math.h>
 //Declaring global variables
 static double timeVal = 0.0;
 static double vinitial = 0.0;
@@ -42,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     btngroup_Checked->addButton(ui->checkBox_Vinitial);
     btngroup_Checked->addButton(ui->checkBox_Vfinal);
     btngroup_Checked->addButton(ui->checkBox_Displacement);
-    //This is only hear because for some reason the group defaulted to exclusive despite the individual buttons all being non-exclusive.
+    //This is only here because for some reason the group defaulted to exclusive despite the individual buttons all being non-exclusive.
     btngroup_Checked->setExclusive(false);
     //*************************************************************
 
@@ -53,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Associating the solve button being pressed with the SolvePressed Function
     connect(ui->pushButton_solve, SIGNAL (released()),this, SLOT (SolvePressed()));
 
-    //Connects the clear button
+    //Connects the reset button to ResetButton()
     connect(ui->pushButton_reset,SIGNAL (released()),this,SLOT(ResetButton()));
 }
 
@@ -62,10 +63,82 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This function handles purely the mathematical portion of the problems and will not
+return as solved until the list of unknowns is empty. It first checks the number of
+unknowns, if there is only 1 it will solve normally, if there are 2 is will iterate
+through and solve each one without using a formula that requires the other.
+It is a boolean with the default value set to false but can be initiated as true inside
+the switch in SolvePressed to break the while loop.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+bool MainWindow::Solution(bool Solved){
+    QString txt_answer;
+if(Solved==false){
+    if(unknownVariables.size()>1){
+        for (int list_Place=0;list_Place<unknownVariables.size();++list_Place) {
+            if(unknownVariables.at(list_Place).contains("t")){
+                if(unknownVariables.at(list_Place+1).contains("a")){
+                    accel=
+                }
+            }
+        }
+    }
+    else if(unknownVariables.isEmpty()== true)
+    {
+        txt_answer = "Time: "+QString::number(timeVal)+"    Initial Velocity: "+QString::number(vinitial)+"    Final Velocity: "+QString::number(vfinal)+\
+                "    Displacement: "+QString::number(displacement)+"    Acceleration: "+ QString::number(accel);
+        ui->label_Answer->setText(txt_answer);
+        return true;
+    }
+    else if (unknownVariables.size()==1) {
+    }
+    return 57;
+}
+else {
+    return true;
+}
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This function ExceptionHandler() identifies any possible unique problems that could be encountered
+based on the user inputs and returns them as a identified case to SolvePressed()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-void MainWindow::Solution(){
+int MainWindow::ExceptionHandler(){
+    if(ui->checkBox_Accel->isChecked()==true){
+        //Checks if the problem is a physical possibility
+        if(((vinitial/vfinal)!=1.0 && accel !=0.0)==true||(vinitial>vfinal && accel>0.0)==true||(vinitial<vfinal && accel<0.0)==true){
+            return Case_Exception;
+        }
+        //Checks if time is set to 0 by user
+        else if (timeVal == 0.0 && (ui->checkBox_Time->isChecked()==true)){
+            return Case_T0;
+        }
+        //Checks if there is an obvious logical solution to finding one of the unknowns
+        else if (accel == 0.0 &&(ui->checkBox_Vinitial->isChecked()==true ||ui->checkBox_Vfinal->isChecked()==true)) {
+            return CaseVi_is_VF;
+        }
+    }
+    //Checks to see if the combination of Vi and VF make acceleration immediately 0.0
+    if(ui->checkBox_Accel->isChecked()==false && ui->checkBox_Vinitial->isChecked()==true && ui->checkBox_Vfinal->isChecked()==true && (vinitial/vfinal ==1.0)==true)
+    {
+        return Case_A0;
+    }
+    //If there is no special case and the problem can now be purely mathmatically.
+    return Case_NoException;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SolvePressed() is run when the solve button is pushed, we know because of MinimumKnownCheck() that
+the problem is certain to be solvable at this point. It commits the entered values to memory and
+identifies the unknowns adding them to a list. it then checks the exception case and handles each case,
+eliminating any unknowns solved logically until the problem returns as solved from the Solution() function.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+void MainWindow::SolvePressed(){
+
     QString txt_answer;
 
+    //Adds any unchecked boxes to the unknown list.
     if (ui->checkBox_Time->isChecked() == false){
         unknownVariables << "t";}
     else if (ui->checkBox_Accel->isChecked() == false){
@@ -77,67 +150,75 @@ void MainWindow::Solution(){
     else if (ui->checkBox_Displacement->isChecked()==false){
         unknownVariables << "d";}
 
-    if(unknownVariables.isEmpty()== false && unknownVariables.size()>1){
-
-        for (int list_Place=0;list_Place<unknownVariables.size();++list_Place) {
-            if(unknownVariables.at(list_Place).contains("t")){
-                CalculateTime();
-            }
-        }
-    }
-    else if(unknownVariables.isEmpty()== true)
-    {
-txt_answer = "Time: "+QString::number(timeVal)+"    Initial Velocity: "+QString::number(vinitial)+"    Final Velocity: "+QString::number(vfinal)+\
-        "    Displacement: "+QString::number(displacement)+"    Acceleration: "+ QString::number(accel);
-ui->label_Answer->setText(txt_answer);
-    }
-    else if (unknownVariables.size()==1) {
-    }
-}
-int MainWindow::ExceptionHandler(){
-    Case val;
-    if(ui->checkBox_Accel->isChecked()==true)
-   return val = ((vinitial>vfinal && accel>0)||(vinitial<vfinal && accel<0))?Case_Exception:Case_NoException;
-    else if (timeVal == 0.0 && (ui->checkBox_Time->isChecked()==true)){
-        return Case_T0;}
-    else {
-        return Case_NoException;
-    }
-}
-
-
-void MainWindow::SolvePressed(){
     timeVal= ui->doubleSpinBox_Time->value();
     vinitial= ui->doubleSpinBox_Vinitial->value();
     vfinal= ui->doubleSpinBox_Vfinal->value();
     displacement= ui->doubleSpinBox_Displacement->value();
     accel= ui->doubleSpinBox_Acceleration->value();
-    int exception_Case = ExceptionHandler();
-    if(exception_Case == Case_NoException){
-        QMessageBox::critical(this,tr("Error"),tr("solution branch"));
-        Solution();
-    }
-    else if (exception_Case== Case_T0) {
-             QString txt_answer;
-             if(vinitial>vfinal){
-            txt_answer= "Time: 0   Initial Velocity: 0    Final Velocity: 0    Displacement: 0    Acceleration: -∞";
-            ui->label_Answer->setText(txt_answer);
-             }
+
+    while (Solution()==false) {
+
+        int exception_Case = ExceptionHandler();
+
+        switch (exception_Case) {
+        case Case_NoException: QMessageBox::critical(this,tr("Working?"),tr("solution branch"));
+            Solution();
+            break;
+
+        case Case_Exception:  QMessageBox::critical(this,tr("Error"),tr("You have entered invalid parameters please try again. This program cannot support non-linear acceleration."));
+            ui->label_Answer->setText("Error: Invalid Values");
+            Solution(true);//This breaks the loop so the user isnt spammed with messages.
+            break;
+
+        case Case_T0:if(vinitial>vfinal){
+                txt_answer= "Time: 0   Initial Velocity: 0    Final Velocity: 0    Displacement: 0    Acceleration: -∞";
+                ui->label_Answer->setText(txt_answer);
+                Solution(true);
+                break;
+            }
             else if (vfinal>vinitial) {
                 txt_answer= "Time: 0   Initial Velocity: 0    Final Velocity: 0    Displacement: 0    Acceleration: ∞";
                 ui->label_Answer->setText(txt_answer);
-             }else {
-                    txt_answer= "Time: 0   Initial Velocity: 0    Final Velocity: 0    Displacement: 0    Acceleration: 0";
-                    ui->label_Answer->setText(txt_answer);
-                }
-    }
-    else{
-        QMessageBox::critical(this,tr("Error"),tr("You have entered invalid parameters please try again. This program cannot support non-linear acceleration."));
-        ui->label_Answer->setText("Error: Invalid Values");
+                Solution(true);
+                break;
+            }else if (unknownVariables.contains("vf")){
+                vfinal=vinitial;
+                txt_answer= "Time: 0   Initial Velocity: " +QString::number(vinitial)+ "    Final Velocity: "+QString::number(vfinal)+"    Displacement: 0    Acceleration: 0";
+                ui->label_Answer->setText(txt_answer);
+                Solution(true);
+                break;
+            }else if (unknownVariables.contains("vi")){
+                vinitial=vfinal;
+                txt_answer= "Time: 0   Initial Velocity: " +QString::number(vinitial)+ "    Final Velocity: "+QString::number(vfinal)+"    Displacement: 0    Acceleration: 0";
+                ui->label_Answer->setText(txt_answer);
+                Solution(true);
+                break;
+            }
+            break;
+
+        case CaseVi_is_VF: if(unknownVariables.contains("vi")){
+                vinitial=vfinal;
+                unknownVariables.removeOne("vi");
+                Solution();
+                break;
+            }
+            else if (unknownVariables.contains("vf")) {
+                vfinal=vinitial;
+                  Solution();
+                unknownVariables.removeOne("vf");
+                break;
+            }
+            break;
+        case Case_A0: unknownVariables.removeOne("a");
+            accel=0.0;
+            Solution();
+            break;
+
+        }
     }
 }
 
-/*****************************************************************
+/*******************************************************************
  The kinematic equation requires atleast 3/5 values to be solvable,
  this function has a creates an array of booleans checking is each
  box is checked. If the total is 4 or greater the solve button is enabled.
@@ -160,7 +241,10 @@ void MainWindow::MinimumKnownCheck()
         knowncount = 0;
         ui->pushButton_solve->setDisabled(1);}
 }
-
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ This function is so simple its almost relaxing. ResetButton()
+ sets all values back to their default state.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 void MainWindow::ResetButton()
 {
     timeVal = 0.0;
