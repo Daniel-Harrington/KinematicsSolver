@@ -81,7 +81,9 @@ void MainWindow::Solution(){
 
         for (int list_Place=0;list_Place<unknownVariables.size();++list_Place) {
             if(unknownVariables.at(list_Place).contains("t")){
-                CalculateTime();
+                switch() {
+                
+                }
             }
         }
     }

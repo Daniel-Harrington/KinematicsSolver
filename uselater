@@ -1,0 +1,2 @@
+QString txt_answer = "Time: "+Qstring::number(timeVal)+"    Initial Velocity: "+QString::number(vinitial)+"    Final Velocity: "+QString::number(vfinal)
+        + "    Displacement: "+QString::number(displacement)+"    Acceleration: "+ QString::number(accel);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>263</height>
+    <width>669</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,7 +98,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <double>-100.000000000000000</double>
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>999.990000000000009</double>
         </property>
        </widget>
       </item>
@@ -108,7 +111,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <double>-100.000000000000000</double>
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>999.990000000000009</double>
         </property>
        </widget>
       </item>
@@ -118,7 +124,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <double>-100.000000000000000</double>
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>999.990000000000009</double>
         </property>
        </widget>
       </item>
@@ -128,7 +137,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <double>-100.000000000000000</double>
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>999.990000000000009</double>
         </property>
        </widget>
       </item>
@@ -138,7 +150,10 @@
          <bool>false</bool>
         </property>
         <property name="minimum">
-         <double>-100.000000000000000</double>
+         <double>-1000.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>999.990000000000009</double>
         </property>
        </widget>
       </item>
@@ -147,22 +162,21 @@
     <item row="1" column="1">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="label_Question">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="label_Answer">
         <property name="enabled">
          <bool>true</bool>
         </property>
+        <property name="font">
+         <font>
+          <family>Cambria Math</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::PlainText</enum>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -207,38 +221,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections>
-  <connection>
-   <sender>pushButton_solve</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>label_Answer</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>46</x>
-     <y>188</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>140</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_solve</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>label_Question</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>46</x>
-     <y>188</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>75</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>checkBox_Accel</sender>
    <signal>toggled(bool)</signal>
@@ -316,6 +298,22 @@
     <hint type="destinationlabel">
      <x>181</x>
      <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_solve</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>label_Answer</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
